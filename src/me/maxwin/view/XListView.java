@@ -17,13 +17,13 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
 
-public class XListView extends ListView implements OnScrollListener {
+public class XListView extends ExpandableListView implements OnScrollListener {
 
 	private float mLastY = -1; // save event y
 	private Scroller mScroller; // used for scroll back
@@ -47,7 +47,7 @@ public class XListView extends ListView implements OnScrollListener {
 	private boolean mEnablePullLoad;
 	private boolean mPullLoading;
 	private boolean mIsFooterReady = false;
-	
+
 	// total list items, used to detect is at the bottom of listview.
 	private int mTotalItemCount;
 
@@ -111,7 +111,7 @@ public class XListView extends ListView implements OnScrollListener {
 	}
 
 	@Override
-	public void setAdapter(ListAdapter adapter) {
+	public void setAdapter(ExpandableListAdapter adapter) {
 		// make sure XListViewFooter is the last footer view, and only add once.
 		if (mIsFooterReady == false) {
 			mIsFooterReady = true;
@@ -144,13 +144,15 @@ public class XListView extends ListView implements OnScrollListener {
 		if (!mEnablePullLoad) {
 			mFooterView.hide();
 			mFooterView.setOnClickListener(null);
-			//make sure "pull up" don't show a line in bottom when listview with one page 
+			// make sure "pull up" don't show a line in bottom when listview
+			// with one page
 			setFooterDividersEnabled(false);
 		} else {
 			mPullLoading = false;
 			mFooterView.show();
 			mFooterView.setState(XListViewFooter.STATE_NORMAL);
-			//make sure "pull up" don't show a line in bottom when listview with one page  
+			// make sure "pull up" don't show a line in bottom when listview
+			// with one page
 			setFooterDividersEnabled(true);
 			// both "pull up" and "click" will invoke load more.
 			mFooterView.setOnClickListener(new OnClickListener() {
@@ -246,7 +248,7 @@ public class XListView extends ListView implements OnScrollListener {
 		}
 		mFooterView.setBottomMargin(height);
 
-//		setSelection(mTotalItemCount - 1); // scroll to bottom
+		// setSelection(mTotalItemCount - 1); // scroll to bottom
 	}
 
 	private void resetFooterHeight() {
@@ -307,8 +309,8 @@ public class XListView extends ListView implements OnScrollListener {
 			} else if (getLastVisiblePosition() == mTotalItemCount - 1) {
 				// invoke load more.
 				if (mEnablePullLoad
-				    && mFooterView.getBottomMargin() > PULL_LOAD_MORE_DELTA
-				    && !mPullLoading) {
+						&& mFooterView.getBottomMargin() > PULL_LOAD_MORE_DELTA
+						&& !mPullLoading) {
 					startLoadMore();
 				}
 				resetFooterHeight();
