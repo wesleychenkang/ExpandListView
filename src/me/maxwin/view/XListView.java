@@ -86,7 +86,8 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 		// XListView need the scroll event, and it will dispatch the event to
 		// user's listener (as a proxy).
 		super.setOnScrollListener(this);
-
+		setChildIndicator(null);
+		setGroupIndicator(null);
 		// init header view
 		mHeaderView = new XListViewHeader(context);
 		mHeaderViewContent = (RelativeLayout) mHeaderView

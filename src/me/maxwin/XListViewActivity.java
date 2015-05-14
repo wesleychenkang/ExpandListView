@@ -34,7 +34,7 @@ public class XListViewActivity extends Activity implements IXListViewListener {
 	}
 
 	private void geneItems() {
-		for (int i = 0; i != 40; ++i) {
+		for (int i = 0; i != 20; ++i) {
 			items.add("refresh cnt " + (++start));
 		}
 	}
