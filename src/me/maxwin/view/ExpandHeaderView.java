@@ -9,7 +9,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class ExpandHeaderView extends LinearLayout {
@@ -17,7 +16,8 @@ public class ExpandHeaderView extends LinearLayout {
     private TextView txt_pull;
     private TextView txt_time;
     private ImageView image_pull;
-    
+    private LinearLayout content; 
+	
 	public ExpandHeaderView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView(context);
@@ -30,18 +30,18 @@ public class ExpandHeaderView extends LinearLayout {
 	}
 
 	private void initView(Context ctx) {
-		LinearLayout all = new LinearLayout(ctx);
-		LayoutParams lp_all = new LayoutParams(LayoutParams.MATCH_PARENT,
+		content = new LinearLayout(ctx);
+		LayoutParams lp_content = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT);
-		all.setOrientation(HORIZONTAL);
-		addView(all,lp_all);
+		content.setOrientation(HORIZONTAL);
+		addView(content,lp_content);
         
 		FrameLayout left = new FrameLayout(ctx);
 		LayoutParams lp_left = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
 		lp_left.weight = 0.6f;
-		all.addView(left,lp_left);
+		content.addView(left,lp_left);
 		image_pull = new ImageView(ctx);
-		image_pull.setBackgroundDrawable(getResources().getDrawable(R.drawable.xlistview_arrow));
+		//image_pull.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_launcher));
 	    FrameLayout.LayoutParams lp_image = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
 	    lp_image.gravity = Gravity.RIGHT|Gravity.CENTER;
 		left.addView(image_pull,lp_image);
@@ -57,7 +57,7 @@ public class ExpandHeaderView extends LinearLayout {
         lp.gravity = Gravity.LEFT;
         lp.weight = 0.4f;
         lp.leftMargin = 10;
-		all.addView(right,lp);
+		content.addView(right,lp);
 		
 		txt_pull = new TextView(ctx);
 		txt_pull.setText("下拉刷新");
@@ -67,5 +67,10 @@ public class ExpandHeaderView extends LinearLayout {
 		txt_time.setText("最近刷新时间:");
 		right.addView(txt_time);
 	}
+	
+	public LinearLayout getContent() {
+		return content;
+	}
+
 
 }

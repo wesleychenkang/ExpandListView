@@ -2,7 +2,7 @@ package me.maxwin;
 
 import java.util.ArrayList;
 
-import me.maxwin.view.MyExpandApt;
+import me.maxwin.view.ExpandAdapter;
 import me.maxwin.view.XListView;
 import me.maxwin.view.XListView.IXListViewListener;
 import android.app.Activity;
@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 
 public class XListViewActivity extends Activity implements IXListViewListener {
 	private XListView mListView;
-	private MyExpandApt mAdapter;
+	private ExpandAdapter mAdapter;
 	private ArrayList<String> items = new ArrayList<String>();
 	private Handler mHandler;
 	private int start = 0;
@@ -25,7 +25,7 @@ public class XListViewActivity extends Activity implements IXListViewListener {
 		geneItems();
 		mListView = (XListView) findViewById(R.id.xListView);
 		mListView.setPullLoadEnable(true);
-		mAdapter = new MyExpandApt(items,items,getApplicationContext());
+		mAdapter = new ExpandAdapter(items,items,getApplicationContext());
 		mListView.setAdapter(mAdapter);
 //		mListView.setPullLoadEnable(false);
 //		mListView.setPullRefreshEnable(false);
@@ -54,7 +54,7 @@ public class XListViewActivity extends Activity implements IXListViewListener {
 				items.clear();
 				geneItems();
 				// mAdapter.notifyDataSetChanged();
-				mAdapter = new MyExpandApt(items,items,getApplicationContext());
+				mAdapter = new ExpandAdapter(items,items,getApplicationContext());
 				mListView.setAdapter(mAdapter);
 				onLoad();
 			}

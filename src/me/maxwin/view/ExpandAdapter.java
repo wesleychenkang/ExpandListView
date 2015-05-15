@@ -9,11 +9,11 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MyExpandApt extends BaseExpandableListAdapter{
+public class ExpandAdapter extends BaseExpandableListAdapter{
     private ArrayList<String> p ;
     private ArrayList<String> son;
     private Context ctx;
-	public MyExpandApt (ArrayList<String>p,ArrayList<String> son,Context ctx){
+	public ExpandAdapter (ArrayList<String>p,ArrayList<String> son,Context ctx){
 		this.p = p;
 		this.son = son;
 		this.ctx = ctx;
