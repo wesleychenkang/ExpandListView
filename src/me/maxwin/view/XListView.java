@@ -11,6 +11,7 @@ package me.maxwin.view;
 import me.maxwin.R;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -19,6 +20,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
@@ -33,17 +35,17 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 	private IXListViewListener mListViewListener;
 
 	// -- header view
-	private XListViewHeader mHeaderView;
+	private ExpandHeaderView mHeaderView;
 	// header view content, use it to calculate the Header's height. And hide it
 	// when disable pull refresh.
-	private RelativeLayout mHeaderViewContent;
-	private TextView mHeaderTimeView;
+	private LinearLayout mHeaderViewContent;
+	//private TextView mHeaderTimeView;
 	private int mHeaderViewHeight; // header view's height
 	private boolean mEnablePullRefresh = true;
 	private boolean mPullRefreshing = false; // is refreashing.
 
 	// -- footer view
-	private XListViewFooter mFooterView;
+	private ExpandFooterView mFooterView;
 	private boolean mEnablePullLoad;
 	private boolean mPullLoading;
 	private boolean mIsFooterReady = false;
@@ -89,15 +91,13 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 		setChildIndicator(null);
 		setGroupIndicator(null);
 		// init header view
-		mHeaderView = new XListViewHeader(context);
-		mHeaderViewContent = (RelativeLayout) mHeaderView
-				.findViewById(R.id.xlistview_header_content);
-		mHeaderTimeView = (TextView) mHeaderView
-				.findViewById(R.id.xlistview_header_time);
+		mHeaderView = new ExpandHeaderView(context);
+		mHeaderViewContent = mHeaderView.getContent();
+		//mHeaderTimeView = mHeaderView.get
 		addHeaderView(mHeaderView);
 
 		// init footer view
-		mFooterView = new XListViewFooter(context);
+		mFooterView = new ExpandFooterView(context);
 
 		// init header height
 		mHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -105,6 +105,10 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 					@Override
 					public void onGlobalLayout() {
 						mHeaderViewHeight = mHeaderViewContent.getHeight();
+						
+						
+						Log.d("test","mHeaderViewHeight"+mHeaderViewHeight );
+						
 						getViewTreeObserver()
 								.removeGlobalOnLayoutListener(this);
 					}
@@ -143,7 +147,7 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 	public void setPullLoadEnable(boolean enable) {
 		mEnablePullLoad = enable;
 		if (!mEnablePullLoad) {
-			mFooterView.hide();
+			mFooterView.sethide();
 			mFooterView.setOnClickListener(null);
 			// make sure "pull up" don't show a line in bottom when listview
 			// with one page
@@ -151,7 +155,7 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 		} else {
 			mPullLoading = false;
 			mFooterView.show();
-			mFooterView.setState(XListViewFooter.STATE_NORMAL);
+			mFooterView.setStatus(XListViewFooter.STATE_NORMAL);
 			// make sure "pull up" don't show a line in bottom when listview
 			// with one page
 			setFooterDividersEnabled(true);
@@ -181,7 +185,7 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 	public void stopLoadMore() {
 		if (mPullLoading == true) {
 			mPullLoading = false;
-			mFooterView.setState(XListViewFooter.STATE_NORMAL);
+			mFooterView.setStatus(XListViewFooter.STATE_NORMAL);
 		}
 	}
 
@@ -191,7 +195,7 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 	 * @param time
 	 */
 	public void setRefreshTime(String time) {
-		mHeaderTimeView.setText(time);
+		mHeaderView.updateTime(time);
 	}
 
 	private void invokeOnScrolling() {
@@ -206,9 +210,9 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 				+ mHeaderView.getVisiableHeight());
 		if (mEnablePullRefresh && !mPullRefreshing) { // 未处于刷新状态，更新箭头
 			if (mHeaderView.getVisiableHeight() > mHeaderViewHeight) {
-				mHeaderView.setState(XListViewHeader.STATE_READY);
+				mHeaderView.setSate(XListViewHeader.STATE_READY);
 			} else {
-				mHeaderView.setState(XListViewHeader.STATE_NORMAL);
+				mHeaderView.setSate(XListViewHeader.STATE_NORMAL);
 			}
 		}
 		setSelection(0); // scroll to top each time
@@ -219,6 +223,7 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 	 */
 	private void resetHeaderHeight() {
 		int height = mHeaderView.getVisiableHeight();
+		Log.d("test", "mHeaderView.getVisiableHeight"+mHeaderView.getVisiableHeight());
 		if (height == 0) // not visible.
 			return;
 		// refreshing and header isn't shown fully. do nothing.
@@ -242,9 +247,9 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 		if (mEnablePullLoad && !mPullLoading) {
 			if (height > PULL_LOAD_MORE_DELTA) { // height enough to invoke load
 													// more.
-				mFooterView.setState(XListViewFooter.STATE_READY);
+				mFooterView.setStatus(XListViewFooter.STATE_READY);
 			} else {
-				mFooterView.setState(XListViewFooter.STATE_NORMAL);
+				mFooterView.setStatus(XListViewFooter.STATE_NORMAL);
 			}
 		}
 		mFooterView.setBottomMargin(height);
@@ -264,7 +269,7 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 
 	private void startLoadMore() {
 		mPullLoading = true;
-		mFooterView.setState(XListViewFooter.STATE_LOADING);
+		mFooterView.setStatus(XListViewFooter.STATE_LOADING);
 		if (mListViewListener != null) {
 			mListViewListener.onLoadMore();
 		}
@@ -286,6 +291,7 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 			if (getFirstVisiblePosition() == 0
 					&& (mHeaderView.getVisiableHeight() > 0 || deltaY > 0)) {
 				// the first item is showing, header has shown or pull down.
+				Log.d("test", "deltaY / OFFSET_RADIO"+deltaY / OFFSET_RADIO);
 				updateHeaderHeight(deltaY / OFFSET_RADIO);
 				invokeOnScrolling();
 			} else if (getLastVisiblePosition() == mTotalItemCount - 1
@@ -301,7 +307,7 @@ public class XListView extends ExpandableListView implements OnScrollListener {
 				if (mEnablePullRefresh
 						&& mHeaderView.getVisiableHeight() > mHeaderViewHeight) {
 					mPullRefreshing = true;
-					mHeaderView.setState(XListViewHeader.STATE_REFRESHING);
+					mHeaderView.setSate(XListViewHeader.STATE_REFRESHING);
 					if (mListViewListener != null) {
 						mListViewListener.onRefresh();
 					}
